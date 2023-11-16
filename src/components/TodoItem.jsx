@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTodo } from "../context/TodoContext";
 
 function TodoItem({ todo }) {
+    const inputRef = useRef(null);
 
     const { updateTodo, deleteTodo, toggleComplete } = useTodo()
     const [isTodoEditable, setisTodoEditable] = useState(false)
@@ -30,7 +31,8 @@ function TodoItem({ todo }) {
         onChange={toggleCompleted}
       />
       <input
-        type="text"
+              type="text"
+              ref={inputRef}
         className={`border outline-none w-full bg-transparent rounded-lg ${
           isTodoEditable ? "border-black/10 px-2" : "border-transparent"
         } ${todo.completed ? "line-through" : ""}`}
@@ -44,9 +46,15 @@ function TodoItem({ todo }) {
         onClick={() => {
           if (todo.completed) return;
 
-          if (isTodoEditable) {
-            editTodo();
-          } else setisTodoEditable((prev) => !prev);
+            if (isTodoEditable) {
+            
+                editTodo();
+            } else {
+                setisTodoEditable((prev) => !prev);
+                if (!isTodoEditable && inputRef.current) {
+                    inputRef.current.focus();
+                }
+            }
         }}
         disabled={todo.completed}>
         {isTodoEditable ? "📁" : "✏️"}
